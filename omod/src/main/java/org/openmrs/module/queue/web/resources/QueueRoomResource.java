@@ -12,22 +12,21 @@ package org.openmrs.module.queue.web.resources;
 import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 import org.openmrs.api.context.Context;
-import org.openmrs.module.queue.api.QueueService;
-import org.openmrs.module.queue.model.Queue;
+import org.openmrs.module.queue.api.QueueRoomService;
+import org.openmrs.module.queue.model.QueueRoom;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
+import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
+import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.RefRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
@@ -35,53 +34,37 @@ import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@SuppressWarnings("unused")
-@Resource(name = RestConstants.VERSION_1 + "/queue", supportedClass = Queue.class, supportedOpenmrsVersions = {
+@Resource(name = RestConstants.VERSION_1 + "/queue-room", supportedClass = QueueRoom.class, supportedOpenmrsVersions = {
         "2.0 - 2.*" })
-public class QueueResource extends DelegatingCrudResource<Queue> {
+public class QueueRoomResource extends DelegatingCrudResource<QueueRoom> {
 	
-	private final QueueService queueService;
+	private final QueueRoomService queueRoomService;
 	
-	public QueueResource() {
-		this.queueService = Context.getService(QueueService.class);
+	public QueueRoomResource() {
+		this.queueRoomService = Context.getService(QueueRoomService.class);
 	}
 	
 	@Override
-	public NeedsPaging<Queue> doGetAll(RequestContext requestContext) throws ResponseException {
-		return new NeedsPaging<Queue>(new ArrayList<Queue>(Context.getService(QueueService.class).getAllQueues()),
-		        requestContext);
+	public NeedsPaging<QueueRoom> doGetAll(RequestContext requestContext) throws ResponseException {
+		return new NeedsPaging<QueueRoom>(
+		        new ArrayList<QueueRoom>(Context.getService(QueueRoomService.class).getAllQueueRooms()), requestContext);
 	}
 	
 	@Override
-	public Queue getByUniqueId(@NotNull String uuid) {
-		Optional<Queue> optionalQueue = queueService.getQueueByUuid(uuid);
-		if (!optionalQueue.isPresent()) {
-			throw new ObjectNotFoundException("Could not find queue with UUID " + uuid);
+	public QueueRoom getByUniqueId(@NotNull String uuid) {
+		Optional<QueueRoom> optionalQueueRoom = queueRoomService.getQueueRoomByUuid(uuid);
+		if (!optionalQueueRoom.isPresent()) {
+			throw new ObjectNotFoundException("Could not find queue room with UUID " + uuid);
 		}
-		return optionalQueue.get();
+		return optionalQueueRoom.get();
 	}
 	
 	@Override
-	protected void delete(Queue queue, String retireReason, RequestContext requestContext) throws ResponseException {
-		if (!this.queueService.getQueueByUuid(queue.getUuid()).isPresent()) {
-			throw new ObjectNotFoundException("Could not find queue with uuid " + queue.getUuid());
+	protected void delete(QueueRoom queueRoom, String retireReason, RequestContext requestContext) throws ResponseException {
+		if (!this.queueRoomService.getQueueRoomByUuid(queueRoom.getUuid()).isPresent()) {
+			throw new ObjectNotFoundException("Could not find queue room with uuid " + queueRoom.getUuid());
 		}
-		this.queueService.voidQueue(queue.getUuid(), retireReason);
-	}
-	
-	@Override
-	public Queue newDelegate() {
-		return new Queue();
-	}
-	
-	@Override
-	public Queue save(Queue queue) {
-		return this.queueService.createQueue(queue);
-	}
-	
-	@Override
-	public void purge(Queue queue, RequestContext requestContext) throws ResponseException {
-		this.queueService.purgeQueue(queue);
+		this.queueRoomService.voidQueueRoom(queueRoom.getUuid(), retireReason);
 	}
 	
 	@Override
@@ -92,15 +75,9 @@ public class QueueResource extends DelegatingCrudResource<Queue> {
 			resourceDescription.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 		} else if (representation instanceof DefaultRepresentation) {
 			this.addSharedResourceDescriptionProperties(resourceDescription);
-			resourceDescription.addProperty("location", Representation.REF);
-			resourceDescription.addProperty("service", Representation.REF);
-			resourceDescription.addProperty("queueRoom", Representation.REF);
 			resourceDescription.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 		} else if (representation instanceof FullRepresentation) {
 			this.addSharedResourceDescriptionProperties(resourceDescription);
-			resourceDescription.addProperty("location", Representation.FULL);
-			resourceDescription.addProperty("service", Representation.FULL);
-			resourceDescription.addProperty("queueRoom", Representation.FULL);
 			resourceDescription.addProperty("auditInfo");
 		} else if (representation instanceof CustomRepresentation) {
 			//For custom representation, must be null
@@ -110,13 +87,26 @@ public class QueueResource extends DelegatingCrudResource<Queue> {
 		return resourceDescription;
 	}
 	
+	@Override
+	public QueueRoom newDelegate() {
+		return new QueueRoom();
+	}
+	
+	@Override
+	public QueueRoom save(QueueRoom queueRoom) {
+		return this.queueRoomService.createQueueRoom(queueRoom);
+	}
+	
+	@Override
+	public void purge(QueueRoom queueRoom, RequestContext requestContext) throws ResponseException {
+		this.queueRoomService.purgeQueueRoom(queueRoom);
+	}
+	
 	private void addSharedResourceDescriptionProperties(DelegatingResourceDescription resourceDescription) {
 		resourceDescription.addSelfLink();
 		resourceDescription.addProperty("uuid");
-		resourceDescription.addProperty("display");
 		resourceDescription.addProperty("name");
 		resourceDescription.addProperty("description");
-		resourceDescription.addProperty("queueRoom");
 	}
 	
 	@Override
@@ -124,9 +114,6 @@ public class QueueResource extends DelegatingCrudResource<Queue> {
 		DelegatingResourceDescription resourceDescription = new DelegatingResourceDescription();
 		resourceDescription.addProperty("name");
 		resourceDescription.addProperty("description");
-		resourceDescription.addProperty("location");
-		resourceDescription.addProperty("service");
-		resourceDescription.addProperty("queueRoom");
 		return resourceDescription;
 	}
 	
@@ -134,37 +121,18 @@ public class QueueResource extends DelegatingCrudResource<Queue> {
 	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
 		return this.getCreatableProperties();
 	}
-	
-	//	@Override
-	//	protected PageableResult doSearch(RequestContext requestContext) {
-	//		String locationUuid = requestContext.getParameter("location");
-	//		Location location = Context.getLocationService().getLocationByUuid(locationUuid);
-	//		if (location == null) {
-	//			throw new ObjectNotFoundException("could not find location with uuid " + locationUuid);
-	//		}
-	//		List<Queue> queuesByLocation = queueService.getAllQueuesByLocation(locationUuid);
-	//		return new NeedsPaging<>(queuesByLocation, requestContext);
+
+	//
+	//	@PropertyGetter("display")
+	//	public String getDisplay(QueueRoom queueRoom) {
+	//		return queueRoom.getName();
 	//	}
-	
-	@Override
-	protected PageableResult doSearch(RequestContext requestContext) {
-		String locationUuid = requestContext.getParameter("location");
-		String queueRoomUuid = requestContext.getParameter("queue-room");
-		log.info("locationUuid" + locationUuid);
-		log.info("queueRoomUuid" + queueRoomUuid);
-		//Both location and queue room are nullable
-		Collection<Queue> queue = this.queueService.getAllQueuesByLocationAndQueueRoom(locationUuid, queueRoomUuid);
-		return new NeedsPaging<>(new ArrayList<>(queue), requestContext);
-	}
-	
-	@PropertyGetter("display")
-	public String getDisplay(Queue queue) {
-		return queue.getName();
-	}
-	
+	//
+
 	@Override
 	public String getResourceVersion() {
 		//What determines the resource version? is it the target platform version or just 1.8
 		return "2.3";
 	}
+	
 }

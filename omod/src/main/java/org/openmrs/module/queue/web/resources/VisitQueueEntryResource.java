@@ -90,8 +90,11 @@ public class VisitQueueEntryResource extends DelegatingCrudResource<VisitQueueEn
 	protected PageableResult doSearch(RequestContext requestContext) {
 		String status = requestContext.getParameter("status");
 		String service = requestContext.getParameter("service");
+		String queueRoomUuid = requestContext.getParameter("queue-room");
+		String queueRoomUuid = requestContext.getParameter("service");
 		//Both status & service are nullable
-		Collection<VisitQueueEntry> visitQueueEntries = this.visitQueueEntryService.findVisitQueueEntries(status, service);
+		Collection<VisitQueueEntry> visitQueueEntries = this.visitQueueEntryService.findVisitQueueEntries(status, service,
+		    queueRoomUuid);
 		return new NeedsPaging<>(new ArrayList<>(visitQueueEntries), requestContext);
 	}
 	
