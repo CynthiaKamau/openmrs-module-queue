@@ -38,22 +38,22 @@ public class VisitQueueEntryDaoImpl extends AbstractBaseQueueDaoImpl<VisitQueueE
 	 */
 	@Override
 	public Collection<VisitQueueEntry> findVisitQueueEntriesByConceptStatusAndConceptService(String conceptStatus,
-	        String conceptService, ConceptNameType conceptNameType, boolean localePreferred) {
-		return handleVisitQueueEntriesByStatusAndServiceCriteria(conceptStatus, conceptService, conceptNameType,
-		    localePreferred).list();
+	        String conceptService, String queueRoomUuid, ConceptNameType conceptNameType, boolean localePreferred) {
+		return handleVisitQueueEntriesByStatusAndServiceCriteria(conceptStatus, conceptService, queueRoomUuid,
+		    conceptNameType, localePreferred).list();
 	}
 	
 	@Override
 	public Long getVisitQueueEntriesCountByStatusAndService(String conceptStatus, String conceptService,
-	        ConceptNameType conceptNameType, boolean localePreferred) {
-		Criteria criteria = handleVisitQueueEntriesByStatusAndServiceCriteria(conceptStatus, conceptService, conceptNameType,
-		    localePreferred);
+	        String queueRoomUuid, ConceptNameType conceptNameType, boolean localePreferred) {
+		Criteria criteria = handleVisitQueueEntriesByStatusAndServiceCriteria(conceptStatus, conceptService, queueRoomUuid,
+		    conceptNameType, localePreferred);
 		criteria.setProjection(Projections.rowCount());
 		return (Long) criteria.uniqueResult();
 	}
 	
 	private Criteria handleVisitQueueEntriesByStatusAndServiceCriteria(String conceptStatus, String conceptService,
-	        ConceptNameType conceptNameType, boolean localePreferred) {
+	        String queueRoomUuid, ConceptNameType conceptNameType, boolean localePreferred) {
 		Criteria criteriaVisitQueueEntries = getCurrentSession().createCriteria(VisitQueueEntry.class, "_vqe");
 		includeVoidedObjects(criteriaVisitQueueEntries, false);
 		Criteria criteriaQueueEntries = criteriaVisitQueueEntries.createCriteria("_vqe.queueEntry", "_qe");

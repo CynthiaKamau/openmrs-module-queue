@@ -9,75 +9,75 @@
  */
 package org.openmrs.module.queue.model;
 
-import javax.persistence.CascadeType;
+<<<<<<< HEAD
+<<<<<<< HEAD
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+=======
+import javax.persistence.CascadeType;
+=======
+>>>>>>> 20804b0 (work in progress)
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+<<<<<<< HEAD
 import org.hibernate.annotations.Where;
+>>>>>>> 92f473e (work in progress)
+=======
+>>>>>>> 20804b0 (work in progress)
 import org.openmrs.BaseChangeableOpenmrsMetadata;
-import org.openmrs.Concept;
-import org.openmrs.Location;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "queue")
-public class Queue extends BaseChangeableOpenmrsMetadata {
+@Table(name = "queue_room")
+public class QueueRoom extends BaseChangeableOpenmrsMetadata {
 	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "queue_id")
-	private Integer queueId;
+	@Column(name = "queue_room_id")
+	private Integer queueRoomId;
 	
-	@ManyToOne
-	@JoinColumn(name = "location_id", nullable = false)
-	private Location location;
+<<<<<<< HEAD
+<<<<<<< HEAD
+	@Override
+=======
+	@OneToMany(mappedBy = "queue_room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Where(clause = "voided = 0 and (started_at <= current_timestamp() and ended_at is null)")
+	private List<QueueRoom> queueRooms;
 	
-	@ManyToOne
-<<<<<<< HEAD
-<<<<<<< HEAD
-	@JoinColumn(name = "queue_room_id", nullable = true)
-	public QueueRoom queueRoom;
-<<<<<<< HEAD
-=======
-	@JoinColumn(name = "queue_room_id", nullable = false)
-=======
-	@JoinColumn(name = "queue_room_id", nullable = true)
->>>>>>> 20804b0 (work in progress)
-	private QueueRoom queueRoom;
 >>>>>>> 92f473e (work in progress)
 =======
->>>>>>> 6068854 (Added queue rooms to queue model)
-	
-	@ManyToOne
-	@JoinColumn(name = "service", referencedColumnName = "concept_id", nullable = false)
-	private Concept service;
-	
-	@OneToMany(mappedBy = "queue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@Where(clause = "voided = 0 and (started_at <= current_timestamp() and ended_at is null)")
-	private List<QueueEntry> queueEntries;
-	
 	@Override
+>>>>>>> 20804b0 (work in progress)
 	public Integer getId() {
-		return getQueueId();
+		return getQueueRoomId();
 	}
 	
+<<<<<<< HEAD
+<<<<<<< HEAD
 	@Override
+=======
+>>>>>>> 92f473e (work in progress)
+=======
+	@Override
+>>>>>>> 20804b0 (work in progress)
 	public void setId(Integer id) {
-		this.setQueueId(id);
+		this.setQueueRoomId(id);
 	}
 }

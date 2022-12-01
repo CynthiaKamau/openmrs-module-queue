@@ -57,7 +57,7 @@ public interface VisitQueueEntryService {
 	 * @param service concept name for queue service
 	 * @return {@link Collection} visitQueueEntries matching specified parameters
 	 */
-	Collection<VisitQueueEntry> findVisitQueueEntries(String status, String service);
+	Collection<VisitQueueEntry> findVisitQueueEntries(String status, String service, String queueRoomUuid);
 	
 	/**
 	 * Voids a visit queue entry record
