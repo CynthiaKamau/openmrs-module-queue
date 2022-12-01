@@ -10,16 +10,16 @@
 package org.openmrs.module.queue.web.resources;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -31,6 +31,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.queue.api.QueueService;
 import org.openmrs.module.queue.model.Queue;
+import org.openmrs.module.queue.model.QueueRoom;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -50,6 +51,9 @@ public class QueueResourceTest extends BaseQueueResourceTest<Queue, QueueResourc
 	
 	@Mock
 	private QueueService queueService;
+	
+	@Mock
+	private QueueRoom queueRoom;
 	
 	@Mock
 	private LocationService locationService;
@@ -155,14 +159,25 @@ public class QueueResourceTest extends BaseQueueResourceTest<Queue, QueueResourc
 		assertThat(result.getTotalCount(), is(1L));
 		result.getPageOfResults().forEach(q -> assertThat(q.getLocation().getUuid(), is(LOCATION_UUID)));
 	}
-
+	
 	@Test
 	public void shouldGetAllQueues() {
 		Queue queueMock = mock(Queue.class);
-
+		
 		when(queueService.getAllQueues()).thenReturn(Collections.singletonList(queueMock));
 		Collection<Queue> result = queueService.getAllQueues();
 		assertThat(result, hasSize(1));
 		assertThat(result, hasItem(queueMock));
 	}
+
+	//	@Test
+	//	public void shouldGetAllQueues() {
+	//		Queue queueMock = mock(Queue.class);
+	//
+	//		when(queueService.getAllQueues()).thenReturn(Collections.singletonList(queueMock));
+	//		Collection<Queue> result = queueService.getAllQueues();
+	//		assertThat(result, hasSize(1));
+	//		assertThat(result, hasItem(queueMock));
+	//	}
+
 }

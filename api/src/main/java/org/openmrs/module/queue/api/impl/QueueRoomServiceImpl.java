@@ -13,26 +13,27 @@ import javax.validation.constraints.NotNull;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import lombok.AccessLevel;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.queue.api.QueueService;
-import org.openmrs.module.queue.api.dao.QueueDao;
-import org.openmrs.module.queue.model.Queue;
+import org.openmrs.module.queue.api.QueueRoomService;
+import org.openmrs.module.queue.api.dao.QueueRoomDao;
+import org.openmrs.module.queue.model.QueueRoom;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional
 @Setter(AccessLevel.MODULE)
-public class QueueServiceImpl extends BaseOpenmrsService implements QueueService {
+public class QueueRoomServiceImpl extends BaseOpenmrsService implements QueueRoomService {
 	
-	private QueueDao<Queue> dao;
+	private QueueRoomDao<QueueRoom> dao;
 	
-	public void setDao(QueueDao<Queue> dao) {
+	public void setDao(QueueRoomDao<QueueRoom> dao) {
 		this.dao = dao;
 	}
 	
@@ -41,8 +42,8 @@ public class QueueServiceImpl extends BaseOpenmrsService implements QueueService
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Queue> getQueueByUuid(@NotNull String queueUuid) {
-		return this.dao.get(queueUuid);
+	public Optional<QueueRoom> getQueueRoomByUuid(@NotNull String queueRoomUuid) {
+		return this.dao.get(queueRoomUuid);
 	}
 	
 	/**
@@ -50,34 +51,16 @@ public class QueueServiceImpl extends BaseOpenmrsService implements QueueService
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Queue> getQueueById(@NotNull Integer queueId) {
-		return this.dao.get(queueId);
+	public Optional<QueueRoom> getQueueRoomById(@NotNull Integer queueRoomId) {
+		return this.dao.get(queueRoomId);
 	}
 	
 	/**
 	 * @see org.openmrs.module.queue.api.QueueService#createQueue(org.openmrs.module.queue.model.Queue)
 	 */
 	@Override
-	public Queue createQueue(@NotNull Queue queue) {
-		return this.dao.createOrUpdate(queue);
-	}
-	
-	/**
-	 * @see org.openmrs.module.queue.api.QueueService#getAllQueuesByLocation(String)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public List<Queue> getAllQueuesByLocation(@NotNull String locationUuid) {
-		return this.dao.getAllQueuesByLocation(locationUuid);
-	}
-	
-	/**
-	 * @see org.openmrs.module.queue.api.QueueService#getAllQueuesByQueueRoom(String)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public List<Queue> getAllQueuesByLocationAndQueueRoom(String locationUuid, String queueRoomUuid) {
-		return this.dao.getAllQueuesByLocationAndQueueRoom(locationUuid, queueRoomUuid);
+	public QueueRoom createQueueRoom(@NotNull QueueRoom queueRoom) {
+		return this.dao.createOrUpdate(queueRoom);
 	}
 	
 	/**
@@ -85,7 +68,7 @@ public class QueueServiceImpl extends BaseOpenmrsService implements QueueService
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Collection<Queue> getAllQueues() {
+	public Collection<QueueRoom> getAllQueueRooms() {
 		return this.dao.findAll();
 	}
 	
@@ -93,14 +76,14 @@ public class QueueServiceImpl extends BaseOpenmrsService implements QueueService
 	 * @see org.openmrs.module.queue.api.QueueService#voidQueue(String, String)
 	 */
 	@Override
-	public void voidQueue(@NotNull String queueUuid, String voidReason) {
-		this.dao.get(queueUuid).ifPresent(queue -> {
-			queue.setRetired(true);
-			queue.setDateRetired(new Date());
-			queue.setRetireReason(voidReason);
-			queue.setRetiredBy(Context.getAuthenticatedUser());
+	public void voidQueueRoom(@NotNull String queueRoomUuid, String voidReason) {
+		this.dao.get(queueRoomUuid).ifPresent(queueRoom -> {
+			queueRoom.setRetired(true);
+			queueRoom.setDateRetired(new Date());
+			queueRoom.setRetireReason(voidReason);
+			queueRoom.setRetiredBy(Context.getAuthenticatedUser());
 			//Effect the change
-			this.dao.createOrUpdate(queue);
+			this.dao.createOrUpdate(queueRoom);
 		});
 	}
 	
@@ -108,7 +91,7 @@ public class QueueServiceImpl extends BaseOpenmrsService implements QueueService
 	 * @see org.openmrs.module.queue.api.QueueService#purgeQueue(org.openmrs.module.queue.model.Queue)
 	 */
 	@Override
-	public void purgeQueue(Queue queue) throws APIException {
-		this.dao.delete(queue);
+	public void purgeQueueRoom(QueueRoom queueRoom) throws APIException {
+		this.dao.delete(queueRoom);
 	}
 }

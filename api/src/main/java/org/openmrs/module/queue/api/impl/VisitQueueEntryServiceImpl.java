@@ -87,10 +87,10 @@ public class VisitQueueEntryServiceImpl extends BaseOpenmrsService implements Vi
 	}
 	
 	@Override
-	public Collection<VisitQueueEntry> findVisitQueueEntries(String status, String service) {
+	public Collection<VisitQueueEntry> findVisitQueueEntries(String status, String service, String queueRoomUuid) {
 		//Restrict to fully_specified concept names
-		return dao.findVisitQueueEntriesByConceptStatusAndConceptService(status, service, ConceptNameType.FULLY_SPECIFIED,
-		    true);
+		return dao.findVisitQueueEntriesByConceptStatusAndConceptService(status, service, queueRoomUuid,
+		    ConceptNameType.FULLY_SPECIFIED, true);
 	}
 	
 	@Override
@@ -114,7 +114,7 @@ public class VisitQueueEntryServiceImpl extends BaseOpenmrsService implements Vi
 	 */
 	@Override
 	public Long getVisitQueueEntriesCountByStatus(String status) {
-		return dao.getVisitQueueEntriesCountByStatusAndService(status, null, ConceptNameType.FULLY_SPECIFIED, true);
+		return dao.getVisitQueueEntriesCountByStatusAndService(status, null, null, ConceptNameType.FULLY_SPECIFIED, true);
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public class VisitQueueEntryServiceImpl extends BaseOpenmrsService implements Vi
 	 */
 	@Override
 	public Long getVisitQueueEntriesCountByService(String service) {
-		return dao.getVisitQueueEntriesCountByStatusAndService(null, service, ConceptNameType.FULLY_SPECIFIED, true);
+		return dao.getVisitQueueEntriesCountByStatusAndService(null, service, null, ConceptNameType.FULLY_SPECIFIED, true);
 	}
 	
 	/**
@@ -130,6 +130,6 @@ public class VisitQueueEntryServiceImpl extends BaseOpenmrsService implements Vi
 	 */
 	@Override
 	public Long getVisitQueueEntriesCountByStatusAndService(String status, String service) {
-		return dao.getVisitQueueEntriesCountByStatusAndService(status, service, ConceptNameType.FULLY_SPECIFIED, true);
+		return dao.getVisitQueueEntriesCountByStatusAndService(status, service, null, ConceptNameType.FULLY_SPECIFIED, true);
 	}
 }

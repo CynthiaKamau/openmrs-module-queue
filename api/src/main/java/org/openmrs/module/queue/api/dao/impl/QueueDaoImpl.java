@@ -33,6 +33,32 @@ public class QueueDaoImpl extends AbstractBaseQueueDaoImpl<Queue> implements Que
 	}
 	
 	@Override
+	public List<Queue> getAllQueuesByLocationAndQueueRoom(String locationUuid, String queueRoomUuid) {
+		Criteria criteria = getCurrentSession().createCriteria(Queue.class, "q");
+		//Include/exclude retired queues
+		includeVoidedObjects(criteria, false);
+		//		if (locationUuid != null) {
+		//			criteria.add(Restrictions.eq("q.locationUuid", locationUuid));
+		//		}
+		//		if (queueRoomUuid != null) {
+		//			criteria.add(Restrictions.eq("q.queueRoomUuid", queueRoomUuid));
+		//		}
+		
+		//		Criteria locationCriteria = criteria.createCriteria("location", "ql");
+		//		locationCriteria.add(Restrictions.eq("ql.uuid", locationUuid));
+		Criteria queueRoomCriteria = criteria.createCriteria("queueRoom", "qr");
+		queueRoomCriteria.add(Restrictions.eq("qr.uuid", queueRoomUuid));
+		
+		//		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		//		CriteriaQuery<Queue> criteria = builder.createQuery(Queue.class);
+		//		Root<Queue> queueRoot = criteria.from(Queue.class);
+		//		criteria.where(builder.and(builder.equal(queueRoot.get("location").get("uuid"), locationUuid),
+		//		    builder.equal(queueRoot.get("queueRoom").get("uuid"), queueRoomUuid)));
+		
+		return (List<Queue>) criteria.list();
+	}
+	
+	@Override
 	public List<Queue> getAllQueuesByLocation(@NotNull String locationUuid, boolean includeVoided) {
 		Criteria criteria = getCurrentSession().createCriteria(Queue.class);
 		//Include/exclude retired queues
