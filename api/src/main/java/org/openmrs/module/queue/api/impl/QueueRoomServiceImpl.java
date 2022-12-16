@@ -17,18 +17,7 @@ import java.util.Optional;
 
 import lombok.AccessLevel;
 import lombok.Setter;
-<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-import lombok.extern.slf4j.Slf4j;
-=======
->>>>>>> 92f473e (work in progress)
-=======
-import lombok.extern.slf4j.Slf4j;
->>>>>>> 20804b0 (work in progress)
->>>>>>> 91159db (Added queue rooms to queue model)
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -37,18 +26,7 @@ import org.openmrs.module.queue.api.dao.QueueRoomDao;
 import org.openmrs.module.queue.model.QueueRoom;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< HEAD
 @Slf4j
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-@Slf4j
-=======
->>>>>>> 92f473e (work in progress)
-=======
-@Slf4j
->>>>>>> 20804b0 (work in progress)
->>>>>>> 91159db (Added queue rooms to queue model)
 @Transactional
 @Setter(AccessLevel.MODULE)
 public class QueueRoomServiceImpl extends BaseOpenmrsService implements QueueRoomService {
